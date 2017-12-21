@@ -30,21 +30,37 @@ public class Press extends Timber.DebugTree {
 		TIME_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
 	}
 
+	private final int priority;
 	private final String folder;
 	private final String prefix;
 	private final ExecutorService executorService;
 
-	public Press(@NonNull String folder, @Nullable String prefix, @Nullable ExecutorService executorService) {
-		if (folder == null)
-			throw new IllegalArgumentException("Missing destination folder");
-
+	/**
+	 *
+	 *
+	 * @param priority minimum priority to accept logs
+	 * @param folder folder where log files will be created
+	 * @param prefix prefix for log file name: <prefix><yyyy-MM-dd>.log
+	 * @param executorService log serialization
+	 */
+	public Press(int priority, @NonNull String folder, @Nullable String prefix, @Nullable ExecutorService executorService) {
+		this.priority = priority;
 		this.folder = folder;
 		this.prefix = prefix == null ? "" : prefix;
 		this.executorService = executorService == null ? Executors.newSingleThreadExecutor() : executorService;
 	}
 
 	@Override
-	protected void log(final int priority, final String tag, final String message, final Throwable t) {
+	protected boolean isLoggable(String tag, int priority) {
+		return priority > this.priority;
+	}
+
+	@Override
+	protected void log(final int priority, @NonNull final String tag, @NonNull final String message, @NonNull final Throwable t) {
+		if (!isLoggable(tag, priority)) {
+			return;
+		}
+
 		executorService.submit(new Runnable() {
 			@Override
 			public void run() {
