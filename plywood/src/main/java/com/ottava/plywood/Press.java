@@ -91,33 +91,7 @@ public class Press extends Timber.DebugTree {
 				try (FileOutputStream fos = new FileOutputStream(file, true);
 				     PrintWriter printWriter = new PrintWriter(fos);) {
 
-					StringBuilder line = new StringBuilder();
-					line.append(TIME_FORMAT.format(currMillis)).append(' ');
-					switch (priority) {
-						case Log.VERBOSE:
-							line.append("V/");
-							break;
-						case Log.DEBUG:
-							line.append("D/");
-							break;
-						case Log.INFO:
-							line.append("I/");
-							break;
-						case Log.WARN:
-							line.append("W/");
-							break;
-						case Log.ERROR:
-							line.append("E/");
-							break;
-						case Log.ASSERT:
-							line.append("A/");
-							break;
-					}
-					line.append(tag).append(": ");
-					line.append(message);
-
-					printWriter.println(line.toString());
-
+					printWriter.println(ply(currMillis, priority, tag, message));
 					printWriter.flush();
 					fos.flush();
 
@@ -126,5 +100,34 @@ public class Press extends Timber.DebugTree {
 				}
 			}
 		});
+	}
+
+	@NonNull
+	private String ply(Long currMillis, int priority, String tag, String message) {
+		StringBuilder line = new StringBuilder();
+		line.append(TIME_FORMAT.format(currMillis)).append(' ');
+		switch (priority) {
+			case Log.VERBOSE:
+				line.append("V/");
+				break;
+			case Log.DEBUG:
+				line.append("D/");
+				break;
+			case Log.INFO:
+				line.append("I/");
+				break;
+			case Log.WARN:
+				line.append("W/");
+				break;
+			case Log.ERROR:
+				line.append("E/");
+				break;
+			case Log.ASSERT:
+				line.append("A/");
+				break;
+		}
+		line.append(tag).append(": ");
+		line.append(message);
+		return line.toString();
 	}
 }
