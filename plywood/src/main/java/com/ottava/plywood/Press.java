@@ -88,11 +88,8 @@ public class Press extends Timber.DebugTree {
 					}
 				}
 
-				FileOutputStream fos = null;
-				PrintWriter printWriter = null;
-				try {
-					fos = new FileOutputStream(file, true);
-					printWriter = new PrintWriter(fos);
+				try (FileOutputStream fos = new FileOutputStream(file, true);
+				     PrintWriter printWriter = new PrintWriter(fos);) {
 
 					StringBuilder line = new StringBuilder();
 					line.append(TIME_FORMAT.format(currMillis)).append(' ');
@@ -124,20 +121,8 @@ public class Press extends Timber.DebugTree {
 					printWriter.flush();
 					fos.flush();
 
-				} catch (Exception e) {
+				} catch (IOException e) {
 					Log.e(tag, "logToSdCard error", e);
-				} finally {
-					if (fos != null) {
-						try {
-							fos.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					}
-
-					if (printWriter != null) {
-						printWriter.close();
-					}
 				}
 			}
 		});
