@@ -59,7 +59,7 @@ public class Press extends Timber.DebugTree {
 
 				Long currMillis = System.currentTimeMillis();
 				String date = DATE_FORMAT.format(currMillis);
-				String filename = date + ".log";
+				String filename = prefix + date + ".log";
 				File file = new File(dir, filename);
 				if (!file.exists()) {
 					try {
